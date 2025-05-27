@@ -7,12 +7,11 @@ app = FastAPI()
 async def kakao_webhook(request: Request):
     req_json = await request.json()
 
-    # 예: 서울시교육청 휘문고 2024년 5월 27일
     office_code = "B10"  # 서울시교육청
-    school_code = "7010569"  # 휘문고등학교
-    date = "20240527"  # 오늘 날짜 형식 YYYYMMDD
+    school_code = "7011109"  # 학교 번호
+    date = "20240527"  # 오늘 날짜 (예시)
 
-    api_key = "e31fe025c01a43049d9621f0922895f2"  # https://open.neis.go.kr에서 발급받기
+    api_key = "e31fe025c01a43049d9621f0922895f2"
 
     url = (
         f"https://open.neis.go.kr/hub/mealServiceDietInfo"
@@ -26,6 +25,7 @@ async def kakao_webhook(request: Request):
 
     try:
         meal_info = data['mealServiceDietInfo'][1]['row'][0]['DDISH_NM']
+        meal_info = meal_info.replace('<br/>', '\n')  # 여기서 줄바꿈 처리
     except:
         meal_info = "급식 정보가 없습니다."
 
@@ -34,7 +34,7 @@ async def kakao_webhook(request: Request):
         "template": {
             "outputs": [{
                 "simpleText": {
-                    "text": f"오늘의 급식은:\n{meal_info.replace('<br/>', '\n')}"
+                    "text": f"오늘의 급식은:\n{meal_info}"
                 }
             }]
         }
